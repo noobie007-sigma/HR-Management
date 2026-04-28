@@ -1,5 +1,5 @@
 # HR-Management
-Suryash - Employee 
+Suyash - Employee 
 Akhya - Department 
 Aditya - Location 
 Tithaye - country 
