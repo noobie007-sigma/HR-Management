@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "jobs")
-public class Jobs {
+public class Job {
 
     @Id
     @Column(name = "job_id", length = 10)
@@ -22,12 +22,12 @@ public class Jobs {
     @Column(name = "max_salary")
     private BigDecimal maxSalary;
 
-    // 🔹 Relationship with Employee (IMPORTANT for Page 3)
+   
     @OneToMany(mappedBy = "job")
     @JsonIgnore   // prevents infinite recursion
     private List<Employee> employees;
 
-    // Getters & Setters
+    
 	public String getJobId() {
 		return jobId;
 	}
