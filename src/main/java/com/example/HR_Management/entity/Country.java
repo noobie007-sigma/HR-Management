@@ -1,6 +1,15 @@
 package com.example.HR_Management.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "countries")
@@ -8,9 +17,13 @@ public class Country {
 
     @Id
     @Column(name = "country_id")
+    @NotBlank(message = "country_id is required")
+    @Size(max = 4, message = "country_id must not exceed 4 characters")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "country_id must contain only letters")
     private String countryId;
 
     @Column(name = "country_name")
+    @NotBlank(message = "country_name must not be blank")
     private String countryName;
 
     @ManyToOne(fetch = FetchType.LAZY)

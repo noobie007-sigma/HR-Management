@@ -1,12 +1,14 @@
 package com.example.HR_Management.repository;
 
 import com.example.HR_Management.entity.Location;
+import com.example.HR_Management.projection.LocationProjection;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.List;
 
-@RepositoryRestResource(path = "locations")
+@RepositoryRestResource(path = "locations" , excerptProjection = LocationProjection.class)
 public interface LocationRepository extends JpaRepository<Location, Long> {
 
     List<Location> findByCity(String city);

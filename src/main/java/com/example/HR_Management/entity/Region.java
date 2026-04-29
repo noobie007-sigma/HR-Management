@@ -4,12 +4,15 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
+@Table(name = "regions")  // Fix 1: map to correct table name
 public class Region {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // Fix 2: remove @GeneratedValue — your DB uses manual IDs (10, 20, 30...)
+    @Column(name = "region_id")
     private Long regionId;
 
+    @Column(name = "region_name")
     private String regionName;
 
     @OneToMany(mappedBy = "region")
