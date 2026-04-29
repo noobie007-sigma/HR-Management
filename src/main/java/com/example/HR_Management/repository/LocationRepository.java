@@ -15,7 +15,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     List<Location> findByPostalCode(String postalCode);
 
-    List<Location> findByCountry_Id(String countryId);
+    List<Location> findByCountry_CountryId(String countryId);
 
-    List<Location> findByCityAndCountry_Id(String city, String countryId);
+    List<Location> findByCityAndCountry_CountryId(String city, String countryId);
 }
