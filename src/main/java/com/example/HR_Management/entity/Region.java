@@ -1,18 +1,22 @@
 package com.example.HR_Management.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.util.List;
 
 @Entity
-@Table(name = "regions")  // Fix 1: map to correct table name
+@Table(name = "regions")
 public class Region {
 
     @Id
-    // Fix 2: remove @GeneratedValue — your DB uses manual IDs (10, 20, 30...)
+    @NotNull(message = "Region ID is required")
+    @Positive(message = "Region ID must be a positive number")
     @Column(name = "region_id")
     private Long regionId;
 
-    @Column(name = "region_name")
+    @NotBlank(message = "Region name is required")
+    @Size(min = 2, max = 25, message = "Region name must be between 2 and 25 characters")
+    @Column(name = "region_name", length = 25)
     private String regionName;
 
     @OneToMany(mappedBy = "region")
