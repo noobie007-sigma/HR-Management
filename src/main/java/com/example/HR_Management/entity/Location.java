@@ -1,6 +1,7 @@
 package com.example.HR_Management.entity;
 
 import java.util.List;
+import java.math.BigDecimal;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -13,8 +14,8 @@ public class Location {
     @Id
     @Column(name = "location_id", precision = 4, scale = 0)
     @NotNull(message = "Location ID is required")
-    @Digits(integer = 4, fraction = 0, message = "Location ID must be max 4 digits")
-    private Long id;
+    @Digits(integer = 4, fraction = 0, message = "Location ID must be a number with max 4 digits")
+    private BigDecimal id;
 
     @Column(name = "street_address", length = 40)
     @Size(max = 40, message = "Street address cannot exceed 40 characters")
@@ -33,7 +34,7 @@ public class Location {
     @Size(max = 25, message = "State/Province cannot exceed 25 characters")
     private String stateProvince;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "country_id")
     private Country country;
 
@@ -41,76 +42,25 @@ public class Location {
     @JsonIgnore
     private List<Department> departments;
 
-    // ===== Constructors =====
 
-    public Location() {
-    }
+    public BigDecimal getId() { return id; }
+    public void setId(BigDecimal id) { this.id = id; }
 
-    public Location(Long id, String streetAddress, String postalCode,
-                    String city, String stateProvince, Country country) {
-        this.id = id;
-        this.streetAddress = streetAddress;
-        this.postalCode = postalCode;
-        this.city = city;
-        this.stateProvince = stateProvince;
-        this.country = country;
-    }
+    public String getStreetAddress() { return streetAddress; }
+    public void setStreetAddress(String streetAddress) { this.streetAddress = streetAddress; }
 
-    // ===== Getters and Setters =====
+    public String getPostalCode() { return postalCode; }
+    public void setPostalCode(String postalCode) { this.postalCode = postalCode; }
 
-    public Long getId() {
-        return id;
-    }
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getStateProvince() { return stateProvince; }
+    public void setStateProvince(String stateProvince) { this.stateProvince = stateProvince; }
 
-    public String getStreetAddress() {
-        return streetAddress;
-    }
+    public Country getCountry() { return country; }
+    public void setCountry(Country country) { this.country = country; }
 
-    public void setStreetAddress(String streetAddress) {
-        this.streetAddress = streetAddress;
-    }
-
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getStateProvince() {
-        return stateProvince;
-    }
-
-    public void setStateProvince(String stateProvince) {
-        this.stateProvince = stateProvince;
-    }
-
-    public Country getCountry() {
-        return country;
-    }
-
-    public void setCountry(Country country) {
-        this.country = country;
-    }
-
-    public List<Department> getDepartments() {
-        return departments;
-    }
-
-    public void setDepartments(List<Department> departments) {
-        this.departments = departments;
-    }
+    public List<Department> getDepartments() { return departments; }
+    public void setDepartments(List<Department> departments) { this.departments = departments; }
 }

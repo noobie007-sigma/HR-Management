@@ -10,4 +10,5 @@ public interface LocationProjection {
     String getPostalCode();
     String getStateProvince();
     String getStreetAddress();
+    CountryProjection getCountry();
 }
