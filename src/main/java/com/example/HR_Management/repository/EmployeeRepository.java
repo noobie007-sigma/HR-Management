@@ -5,7 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @RepositoryRestResource(collectionResourceRel = "employees", path = "employees")
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
@@ -33,4 +35,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Override
     @RestResource(exported = false)
     void deleteAll();
+ 
+ Optional<Employee> findTopByDepartmentDepartmentIdOrderBySalaryDesc(BigDecimal departmentId);
+ 
+ Optional<Employee> findTopByDepartmentDepartmentIdOrderBySalaryAsc(BigDecimal departmentId);
 }
