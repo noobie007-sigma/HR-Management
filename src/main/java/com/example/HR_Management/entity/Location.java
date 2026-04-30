@@ -3,6 +3,7 @@ package com.example.HR_Management.entity;
 import java.util.List;
 import java.math.BigDecimal;
 
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -17,6 +18,7 @@ public class Location {
     @Digits(integer = 4, fraction = 0, message = "Location ID must be a number with max 4 digits")
     private BigDecimal id;
 
+
     @Column(name = "street_address", length = 40)
     @Size(max = 40, message = "Street address cannot exceed 40 characters")
     private String streetAddress;
@@ -28,6 +30,7 @@ public class Location {
     @Column(name = "city", nullable = false, length = 30)
     @NotBlank(message = "City is mandatory")
     @Size(max = 30, message = "City cannot exceed 30 characters")
+
     private String city;
 
     @Column(name = "state_province", length = 25)
@@ -41,7 +44,6 @@ public class Location {
     @OneToMany(mappedBy = "location")
     @JsonIgnore
     private List<Department> departments;
-
 
     public BigDecimal getId() { return id; }
     public void setId(BigDecimal id) { this.id = id; }

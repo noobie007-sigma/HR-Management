@@ -42,9 +42,10 @@ public class Department {
 
     public Department() {}
 
-    public Department(BigDecimal departmentId, String departmentName) {
+    public Department(BigDecimal departmentId, String departmentName,Location location) {
         this.departmentId = departmentId;
         this.departmentName = departmentName;
+        this.location = location;
     }
 
     
