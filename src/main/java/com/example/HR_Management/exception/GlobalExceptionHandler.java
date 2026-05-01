@@ -167,4 +167,9 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(status).body(response);
     }
+    
+   /* @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleConflict(Exception ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }*/
 }
