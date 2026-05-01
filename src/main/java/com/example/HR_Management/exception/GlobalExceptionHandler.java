@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.rest.core.RepositoryConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.core.convert.ConversionFailedException;
@@ -127,7 +128,25 @@ public class GlobalExceptionHandler {
                 List.of(),
                 request);
     }
+    @ExceptionHandler(RepositoryConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleRepositoryValidation(
+            RepositoryConstraintViolationException ex,
+            HttpServletRequest request) {
 
+        List<String> errors = ex.getErrors()
+                .getAllErrors()
+                .stream()
+                .map(error -> error.getDefaultMessage())
+                .collect(Collectors.toList());
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                "Validation Failed",
+                "Repository validation failed",
+                errors,
+                request
+        );
+    }
     // ================================
     // 🟢 COMMON RESPONSE BUILDER
     // ================================
