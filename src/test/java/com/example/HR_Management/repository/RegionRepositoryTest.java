@@ -3,6 +3,7 @@ package com.example.HR_Management.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -38,7 +39,7 @@ class RegionRepositoryTest {
     @Autowired
     private RegionRepository regionRepository;
 
-    private static final Long TEST_REGION_ID = 99L;
+    private static final BigDecimal TEST_REGION_ID = BigDecimal.valueOf(99);
     private static final String TEST_REGION_NAME = "Test Region";
 
     @AfterEach
@@ -77,7 +78,7 @@ class RegionRepositoryTest {
     @Order(3)
     @DisplayName("findById() returns region for existing ID")
     void findById_WhenValidId_ReturnsRegion() {
-        Long id = regionRepository.findAll().get(0).getRegionId();
+        BigDecimal id = regionRepository.findAll().get(0).getRegionId();
 
         Optional<Region> result = regionRepository.findById(id);
 
@@ -90,7 +91,7 @@ class RegionRepositoryTest {
     @Order(4)
     @DisplayName("findById() returns empty for non-existing ID")
     void findById_WhenIdNotFound_ReturnsEmpty() {
-        Optional<Region> result = regionRepository.findById(999L);
+        Optional<Region> result = regionRepository.findById(BigDecimal.valueOf(999));
 
         assertThat(result).isNotPresent();
     }
@@ -198,7 +199,7 @@ class RegionRepositoryTest {
     @Order(11)
     @DisplayName("existsById() returns true for existing ID")
     void existsById_WhenIdExists_ReturnsTrue() {
-        Long id = regionRepository.findAll().get(0).getRegionId();
+        BigDecimal id = regionRepository.findAll().get(0).getRegionId();
 
         assertThat(regionRepository.existsById(id)).isTrue();
     }
@@ -208,7 +209,7 @@ class RegionRepositoryTest {
     @Order(12)
     @DisplayName("existsById() returns false for non-existing ID")
     void existsById_WhenIdNotFound_ReturnsFalse() {
-        assertThat(regionRepository.existsById(999L)).isFalse();
+        assertThat(regionRepository.existsById(BigDecimal.valueOf(999))).isFalse();
     }
 
     // R-REP-13
