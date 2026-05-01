@@ -30,7 +30,6 @@ public class Location {
     @Column(name = "city", nullable = false, length = 30)
     @NotBlank(message = "City is mandatory")
     @Size(max = 30, message = "City cannot exceed 30 characters")
-
     private String city;
 
     @Column(name = "state_province", length = 25)
