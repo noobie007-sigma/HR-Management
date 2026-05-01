@@ -8,12 +8,13 @@ import org.springframework.validation.annotation.Validated;
 
 import com.example.HR_Management.entity.Region;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 @Validated
 @RepositoryRestResource(collectionResourceRel = "regions", path = "regions")
-public interface RegionRepository extends JpaRepository<Region, Long> {
+public interface RegionRepository extends JpaRepository<Region, BigDecimal> {
 
     
     Optional<Region> findByRegionNameIgnoreCase(

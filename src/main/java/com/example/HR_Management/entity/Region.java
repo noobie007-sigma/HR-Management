@@ -2,6 +2,8 @@ package com.example.HR_Management.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -12,7 +14,7 @@ public class Region {
     @NotNull(message = "Region ID is required")
     @Positive(message = "Region ID must be a positive number")
     @Column(name = "region_id")
-    private Long regionId;
+    private BigDecimal regionId;
 
     @NotBlank(message = "Region name is required")
     @Size(min = 2, max = 25, message = "Region name must be between 2 and 25 characters")
@@ -22,11 +24,11 @@ public class Region {
     @OneToMany(mappedBy = "region")
     private List<Country> countries;
 
-    public Long getRegionId() {
+    public BigDecimal getRegionId() {
         return regionId;
     }
 
-    public void setRegionId(Long regionId) {
+    public void setRegionId(BigDecimal regionId) {
         this.regionId = regionId;
     }
 
