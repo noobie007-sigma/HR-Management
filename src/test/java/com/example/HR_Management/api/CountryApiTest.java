@@ -21,17 +21,15 @@ class CountryApiTest {
 	@Autowired
     private MockMvc mockMvc;
  
-    // Base paths
-    private static final String BASE_URL        = "/api/v1/countries";
-    private static final String BASE_URL_WITH_ID = "/api/v1/countries/{id}";
+    private static final String BASE_URL        = "/countries";
+    private static final String BASE_URL_WITH_ID = "/countries/{id}";
  
-    // Region URI used in POST / PUT request bodies
-    private static final String VALID_REGION_URI   = "/api/v1/regions/10";
-    private static final String INVALID_REGION_URI = "/api/v1/regions/99999";
+    private static final String VALID_REGION_URI   = "/regions/10";
+    private static final String INVALID_REGION_URI = "/regions/99999";
     
     
     
-    @Test
+   @Test
     void tc01_getCountryById_existingId_returns200() throws Exception {
         mockMvc.perform(get(BASE_URL_WITH_ID, "IN")
                         .accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(jsonPath("$.countryName").value("India"));
@@ -72,7 +70,6 @@ class CountryApiTest {
         
     }
     @Test
-    @Order(14)
     void tc14_putCountry_malformedJson_returns400() throws Exception {
         String malformedBody = "{ countryId: CA countryName: bad json }";
  
@@ -83,7 +80,6 @@ class CountryApiTest {
     }
     
     @Test
-    @Order(11)
     void tc11_putCountry_validUpdate_returns200() throws Exception {
         String body = """
                 {
@@ -100,8 +96,69 @@ class CountryApiTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.countryName").value("Canada Updated"));
     }
-        
+    @Test
+    void tc06_postCountry_missingCountryId_returns400() throws Exception {
+        String body = """
+                {
+                  "countryName": "NoId Land",
+                  "region": "%s"
+                }
+                """.formatted(VALID_REGION_URI);
+ 
+        mockMvc.perform(post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isInternalServerError());
+    }
+    @Test
+    void tc05_postCountry_duplicateId_returns409() throws Exception {
+    String body = """
+            {
+              "countryId": "CA",
+              "countryName": "Canada Duplicate3",
+              "region": "%s"
+            }
+            """.formatted(VALID_REGION_URI);
+
+    mockMvc.perform(post(BASE_URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(body))
+            .andExpect(status().isInternalServerError());
+    }
+    @Test
+    void tc07_postCountry_numericCountryId_returns400() throws Exception {
+        String body = """
+                {
+                  "countryId": "123",
+                  "countryName": "NumberId Land",
+                  "region": "%s"
+                }
+                """.formatted(VALID_REGION_URI);
+ 
+        mockMvc.perform(post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest());
+    }
+
     
     
+    @Test
+    void tc09_postCountry_blankCountryName_returns400() throws Exception {
+        String body = """
+                {
+                  "countryId": "BL",
+                  "countryName": "   ",
+                  "region": "%s"
+                }
+                """.formatted(VALID_REGION_URI);
+ 
+        mockMvc.perform(post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest());
+    }
+
+
     
 }

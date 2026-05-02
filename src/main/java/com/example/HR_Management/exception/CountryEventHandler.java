@@ -1,6 +1,7 @@
 package com.example.HR_Management.exception;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Component;
 import com.example.HR_Management.entity.Country;
 import com.example.HR_Management.repository.CountryRepository;
 import com.example.HR_Management.repository.RegionRepository;
+
+
 @Component
 @RepositoryEventHandler
 public class CountryEventHandler {
@@ -27,16 +30,30 @@ public class CountryEventHandler {
     public void handleBeforeCreate(Country country) {
         validateDuplicate(country);
         validateRegion(country);
+        validateCountry(country);
+        validateId(country);
     }
 
     @HandleBeforeSave
     public void handleBeforeSave(Country country) {
         validateRegion(country);
+        validateCountry(country);
+        validateId(country);
     }
 
     private void validateDuplicate(Country country) {
         if (countryRepository.existsById(country.getCountryId())) {
             throw new RuntimeException("Country already exists"); 
+        }
+    }
+    private void validateId(Country country) {
+        if (country.getCountryId()==null) {
+            throw new RuntimeException("Country Id is missing"); 
+        }
+    }
+    private void validateCountry(Country country) {
+        if (country.getCountryName()==null) {
+            throw new RuntimeException("Country Name is missing"); 
         }
     }
 

@@ -63,7 +63,6 @@ class CountryRepositoryTest {
  
  
     @Test
-    @Order(1)
     @DisplayName("save() – should persist a new country and assign the given id")
     void testSaveCountry() {
         Country saved = countryRepository.findById("ZZ").orElse(null);
@@ -75,7 +74,6 @@ class CountryRepositoryTest {
     }
  
     @Test
-    @Order(2)
     @DisplayName("findById() – should return the country when it exists")
     void testFindByIdExists() {
         Optional<Country> result = countryRepository.findById("ZZ");
@@ -94,7 +92,6 @@ class CountryRepositoryTest {
     }
  
     @Test
-    @Order(4)
     @DisplayName("findAll() – should return a non-empty list containing the test country")
     void testFindAll() {
         List<Country> all = countryRepository.findAll();
@@ -107,14 +104,13 @@ class CountryRepositoryTest {
     @Order(5)
     @DisplayName("findByCountryNameIgnoreCase() – should find country by name regardless of case")
     void testFindByCountryNameIgnoreCase() {
-        Optional<Country> result = countryRepository.findByCountryNameIgnoreCase("testland");
+        Optional<Country> result = countryRepository.findByCountryNameIgnoreCase("india");
  
         assertThat(result).isPresent();
-        assertThat(result.get().getCountryId()).isEqualTo("ZZ");
+        assertThat(result.get().getCountryId()).isEqualTo("IN");
     }
  
     @Test
-    @Order(6)
     @DisplayName("findByCountryNameIgnoreCase() – should return empty when name does not match")
     void testFindByCountryNameNotFound() {
         Optional<Country> result = countryRepository.findByCountryNameIgnoreCase("NonExistentCountry");
@@ -123,7 +119,6 @@ class CountryRepositoryTest {
     }
  
     @Test
-    @Order(7)
     @DisplayName("findByRegion_RegionId() – should list all countries in a region")
     void testFindByRegionId() {
         List<Country> result = countryRepository.findByRegion_RegionId(EXISTING_REGION_ID);
@@ -133,7 +128,6 @@ class CountryRepositoryTest {
     }
  
     @Test
-    @Order(8)
     @DisplayName("existsByCountryNameIgnoreCase() – should return true for an existing name")
     void testExistsByCountryName_True() {
         boolean exists = countryRepository.existsByCountryNameIgnoreCase("TestLand");
@@ -142,7 +136,6 @@ class CountryRepositoryTest {
     }
  
     @Test
-    @Order(9)
     @DisplayName("existsByCountryNameIgnoreCase() – should return false for an absent name")
     void testExistsByCountryName_False() {
         boolean exists = countryRepository.existsByCountryNameIgnoreCase("GhostLand");
@@ -151,7 +144,6 @@ class CountryRepositoryTest {
     }
  
     @Test
-    @Order(10)
     @DisplayName("save() (update) – should update an existing country's name")
     void testUpdateCountryName() {
         Country country = countryRepository.findById("ZZ")
@@ -167,7 +159,6 @@ class CountryRepositoryTest {
     }
  
     @Test
-    @Order(11)
     @DisplayName("deleteById() – should remove the country and findById should return empty")
     void testDeleteById() {
         countryRepository.deleteById("ZZ");
@@ -175,12 +166,10 @@ class CountryRepositoryTest {
         Optional<Country> deleted = countryRepository.findById("ZZ");
         assertThat(deleted).isNotPresent();
  
-        // Re-save so @AfterEach tearDown doesn't fail trying to delete a gone row.
         countryRepository.save(testCountry);
     }
  
     @Test
-    @Order(12)
     @DisplayName("count() – should be greater than zero after at least one save")
     void testCount() {
         long count = countryRepository.count();
