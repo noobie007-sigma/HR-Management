@@ -100,7 +100,7 @@ class DepartmentRepositoryTest {
         Department dept = entityManager.find(Department.class, new BigDecimal("10"));
         assertNotNull(dept, "Department with ID 10 must exist in the hr database");
 
-        Employee newManager = entityManager.find(Employee.class, 200L);
+        Employee newManager = entityManager.find(Employee.class, new BigDecimal("200"));
         assertNotNull(newManager, "Employee 200 must exist to be assigned as manager");
 
         dept.setManager(newManager);
@@ -109,7 +109,7 @@ class DepartmentRepositoryTest {
 
         Department updated = entityManager.find(Department.class, new BigDecimal("10"));
         assertNotNull(updated.getManager());
-        assertEquals(200L, updated.getManager().getEmployeeId());
+        assertEquals(new BigDecimal("200"), updated.getManager().getEmployeeId());
     }
 
     @Test

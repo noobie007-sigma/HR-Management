@@ -24,6 +24,31 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.List;
 import java.util.stream.Collectors;
 
+/*
+ * FIX: The original file had TWO @ExceptionHandler methods both targeting
+ * com.example.HR_Management.exception.ResourceNotFoundException:
+ *
+ *   1. handleNotFound(Exception, HttpServletRequest) — listed it in the
+ *      @ExceptionHandler array as "ResourceNotFoundException.class"
+ *   2. handleNotFound(ResourceNotFoundException) — a duplicate at the bottom
+ *
+ * Because GlobalExceptionHandler lives in the same package as the custom
+ * ResourceNotFoundException, Java's same-package resolution rule means the
+ * unqualified name ALWAYS refers to the local class, silently shadowing the
+ *   import org.springframework.data.rest.webmvc.ResourceNotFoundException
+ * that was at the top of the file.  Both handlers therefore targeted the
+ * SAME class, which Spring Framework 7 rejects with:
+ *   IllegalStateException: Ambiguous @ExceptionHandler method mapped for
+ *   class com.example.HR_Management.exception.ResourceNotFoundException
+ * causing the ApplicationContext to fail to start entirely.
+ *
+ * Fix applied:
+ *   - Removed the duplicate bottom handler completely.
+ *   - Removed the now-redundant SDR import (it was shadowed anyway).
+ *   - Expanded the single handleNotFound handler to explicitly cover all
+ *     three not-found types using the fully-qualified SDR class name so
+ *     there is zero ambiguity about which class each entry refers to.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -59,7 +84,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
-   
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleConstraint(
             ConstraintViolationException ex,
@@ -74,7 +98,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 "Constraint violation", errors, request);
     }
 
-   
     @ExceptionHandler({
             MethodArgumentTypeMismatchException.class,
             ConversionFailedException.class,
@@ -88,7 +111,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 "Invalid request parameter", List.of(ex.getMessage()), request);
     }
 
-    
     @ExceptionHandler(HttpMessageConversionException.class)
     public ResponseEntity<ErrorResponse> handleConversion(
             HttpMessageConversionException ex,
@@ -98,9 +120,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 "Invalid input format", List.of(), request);
     }
 
-   
+    /*
+     * Handles all three not-found variants in one place:
+     *   - EntityNotFoundException        : JPA entity lookup failure
+     *   - SDR ResourceNotFoundException  : Spring Data REST lookup failure
+     *   - Custom ResourceNotFoundException: thrown explicitly by controllers
+     *
+     * The SDR class is referenced by its fully-qualified name so there is no
+     * import collision with the same-named class in this package.
+     */
     @ExceptionHandler({
             EntityNotFoundException.class,
+            org.springframework.data.rest.webmvc.ResourceNotFoundException.class,
             ResourceNotFoundException.class
     })
     public ResponseEntity<ErrorResponse> handleNotFound(
@@ -112,7 +143,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 List.of(), request);
     }
 
-   
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDatabase(
             DataIntegrityViolationException ex,
@@ -124,7 +154,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 request);
     }
 
-    
     @ExceptionHandler(RepositoryConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleRepositoryValidation(
             RepositoryConstraintViolationException ex,
@@ -140,7 +169,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 "Repository validation failed", errors, request);
     }
 
-   
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(
             Exception ex,
@@ -150,7 +178,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 "Internal Server Error", ex.getMessage(), List.of(), request);
     }
 
-    
     private ResponseEntity<ErrorResponse> buildResponse(
             HttpStatus status,
             String error,
@@ -162,9 +189,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 status.value(), error, message, details, request.getRequestURI());
         return ResponseEntity.status(status).body(response);
     }
-    
-   /* @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> handleConflict(Exception ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-    }*/
 }
