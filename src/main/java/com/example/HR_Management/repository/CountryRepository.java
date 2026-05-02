@@ -11,9 +11,7 @@ import com.example.HR_Management.entity.Country;
 
 @RepositoryRestResource(path = "countries")
 public interface CountryRepository extends JpaRepository<Country, String> {
-	/*List<Country> findByRegion_RegionId(Long regionId);
 
-	List<Country> findByCountryNameContainingIgnoreCase(String name);*/
 	
     //boolean existsByCountryNameIgnoreCase(String countryName);
 	Optional<Country> findByCountryNameIgnoreCase(String countryName);
