@@ -56,37 +56,37 @@ public interface EmployeeRepository extends JpaRepository<Employee, BigDecimal> 
 
     Optional<Employee> findTopByDepartmentDepartmentIdOrderBySalaryAsc(BigDecimal departmentId);
 
-    @RestResource(path = "totalCommission", rel = "totalCommission")
+    @RestResource(path = "totalCommission", rel = "totalCommission", exported = false)
     @Query("SELECT SUM(e.salary * COALESCE(e.commissionPct, 0)) " +
            "FROM Employee e WHERE e.department.departmentId = :deptId")
     BigDecimal findTotalCommissionByDepartment(@Param("deptId") BigDecimal deptId);
 
-
-    @RestResource(path = "countByDepartment", rel = "countByDepartment")
+    
+    @RestResource(path = "countByDepartment", rel = "countByDepartment", exported = false)
     @Query("SELECT d.departmentName, COUNT(e) " +
            "FROM Employee e JOIN e.department d " +
            "GROUP BY d.departmentName")
     List<Object[]> countEmployeesGroupByDepartment();
     long countByDepartment_Location_Id(BigDecimal locationId);
 
-    @RestResource(path = "countByLocation", rel = "countByLocation")
+    @RestResource(path = "countByLocation", rel = "countByLocation", exported = false)
     @Query("SELECT l.city, COUNT(e) " +
            "FROM Employee e JOIN e.department d JOIN d.location l " +
            "GROUP BY l.city")
     List<Object[]> countEmployeesGroupByLocation();
 
 
-    @RestResource(path = "maxSalaryOfJob", rel = "maxSalaryOfJob")
+    @RestResource(path = "maxSalaryOfJob", rel = "maxSalaryOfJob", exported = false)
     @Query("SELECT e.job.maxSalary FROM Employee e WHERE e.employeeId = :id")
     BigDecimal findMaxSalaryOfJobByEmployee(@Param("id") BigDecimal id);
 
-    @RestResource(path = "openPositions", rel = "openPositions")
+    @RestResource(path = "openPositions", rel = "openPositions", exported = false)
     @Query("SELECT j.jobId FROM Job j " +
            "WHERE j.jobId NOT IN " +
            "(SELECT DISTINCT e.job.jobId FROM Employee e WHERE e.job IS NOT NULL)")
     List<String> findAllOpenPositions();
 
-    @RestResource(path = "openPositionsByDept", rel = "openPositionsByDept")
+    @RestResource(path = "openPositionsByDept", rel = "openPositionsByDept", exported = false)
     @Query("SELECT j.jobId FROM Job j " +
            "WHERE j.jobId NOT IN (" +
            "  SELECT DISTINCT e.job.jobId FROM Employee e " +

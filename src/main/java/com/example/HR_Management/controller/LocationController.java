@@ -1,5 +1,6 @@
 package com.example.HR_Management.controller;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +21,7 @@ public class LocationController {
     }
 
     @GetMapping("/{id}/employee-count")
-    public Map<String, Object> getEmployeeCount(@PathVariable("id") Long locationId) {
+    public Map<String, Object> getEmployeeCount(@PathVariable("id") BigDecimal locationId) {
 
         long count = employeeRepository.countByDepartment_Location_Id(locationId);
 
