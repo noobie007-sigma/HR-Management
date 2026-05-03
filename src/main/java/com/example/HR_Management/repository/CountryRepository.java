@@ -8,8 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.example.HR_Management.entity.Country;
+import com.example.HR_Management.projection.CountryProjection;
 
-@RepositoryRestResource(path = "countries")
+@RepositoryRestResource(path = "countries", excerptProjection = CountryProjection.class)
 public interface CountryRepository extends JpaRepository<Country, String> {
 
 	

@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.HR_Management.dto.CountryDTO;
 import com.example.HR_Management.entity.Employee;
+import com.example.HR_Management.repository.CountryRepository;
 import com.example.HR_Management.repository.EmployeeRepository;
 
 @RestController
@@ -19,33 +21,20 @@ import com.example.HR_Management.repository.EmployeeRepository;
 public class CountryController {
 
     private final EmployeeRepository employeeRepository;
+    private final CountryRepository countryRepository;
 
-    public CountryController(EmployeeRepository employeeRepository) {
+    public CountryController(EmployeeRepository employeeRepository,CountryRepository countryRepository) {
         this.employeeRepository = employeeRepository;
+        this.countryRepository = countryRepository;
     }
 
-    // GET /api/v1/country/{countryId}/employees
-    // Returns all employees in the given country plus a total count.
-    //
-    // The repository method uses the "Employee.withDepartmentLocationCountry"
-    // entity graph, so department + location + country + job are all JOIN-fetched
-    // in a single SQL query — no lazy loading happens here at all.
-    //
-    // IMPORTANT: We map each Employee to a plain Map before returning.
-    // Do NOT return the Employee entity directly — see recursion warning below.
     @GetMapping("/{countryId}/employees")
-    public ResponseEntity<Map<String, Object>> getEmployeesByCountry(
-            @PathVariable String countryId) {
+    public ResponseEntity<Map<String, Object>> getEmployeesByCountry(@PathVariable String countryId) {
 
-        List<Employee> employees =
-            employeeRepository.findByDepartment_Location_Country_CountryId(countryId);
-        long count =
-                employeeRepository.countByDepartment_Location_Country_CountryId(countryId);
+        List<Employee> employees = employeeRepository.findByDepartment_Location_Country_CountryId(countryId);
+        long count = employeeRepository.countByDepartment_Location_Country_CountryId(countryId);
 
-            // Map each Employee to a safe flat structure.
-            // Because the entity graph fetched department + job eagerly,
-            // e.getDepartment() and e.getJob() are safe to call here without
-            // triggering additional queries or lazy-load exceptions.
+            
             List<Map<String, Object>> employeeDtos = employees.stream().map(e -> {
                 Map<String, Object> dto = new LinkedHashMap<>();
                 dto.put("employeeId",     e.getEmployeeId());
@@ -56,8 +45,7 @@ public class CountryController {
                 dto.put("hireDate",       e.getHireDate());
                 dto.put("salary",         e.getSalary());
                 dto.put("jobTitle",       e.getJob() != null ? e.getJob().getJobTitle() : null);
-                dto.put("departmentName", e.getDepartment() != null
-                                            ? e.getDepartment().getDepartmentName() : null);
+                dto.put("departmentName", e.getDepartment() != null ? e.getDepartment().getDepartmentName() : null);
                 return dto;
             }).collect(Collectors.toList());
 
@@ -68,4 +56,14 @@ public class CountryController {
 
             return ResponseEntity.ok(result);
         }
+    @GetMapping("/countries")
+    public List<CountryDTO> getCountries() {
+        return countryRepository.findAll().stream().map(c -> {
+            CountryDTO dto = new CountryDTO();
+            dto.setCountryId(c.getCountryId());
+            dto.setCountryName(c.getCountryName());
+            dto.setRegionId(c.getRegion().getRegionId());
+            return dto;
+        }).toList();
     }
+ }
