@@ -72,7 +72,13 @@ public class EmployeeApiTest {
         mockMvc.perform(get(BASE + "/9999").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
-
+    @Test
+    @DisplayName("GET /employees/abc — 400 invalid ID type")
+    void getById_typeMismatch() throws Exception {
+        mockMvc.perform(get(BASE + "/abc")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
     // ----------------------------------------------------------------
     // POST — add new employee (spec requires this)
     // ----------------------------------------------------------------
@@ -114,7 +120,7 @@ public class EmployeeApiTest {
                   "employeeId": 9921,
                   "firstName": "",
                   "lastName": "User",
-                  "email": "[blank@hr.com](mailto:blank@hr.com)",
+                  "email": "blank@hr.com",
                   "hireDate": "2024-01-15",
                   "salary": 5000.00,
                   "job": "/api/v1/jobs/AD_PRES"
@@ -125,6 +131,45 @@ public class EmployeeApiTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(status().isBadRequest()); // accepts any 4xx or 5xx
+    }
+    @Test
+    @DisplayName("POST /employees — 400 when salary is negative")
+    void post_negativeSalary_returns400() throws Exception {
+        String payload = """
+                {
+                  "employeeId": 9923,
+                  "firstName": "Test",
+                  "lastName": "User",
+                  "email": "neg.salary@hr.com",
+                  "hireDate": "2024-01-15",
+                  "salary": -5000.00,
+                  "job": "/api/v1/jobs/AD_PRES"
+                }
+                """;
+
+        mockMvc.perform(post(BASE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
+                .andExpect(status().isBadRequest());
+    }
+    @Test
+    @DisplayName("POST /employees — 400 when required field (job) is missing")
+    void post_missingJob_returns400() throws Exception {
+        String payload = """
+                {
+                  "employeeId": 9924,
+                  "firstName": "Test",
+                  "lastName": "User",
+                  "email": "nojob@hr.com",
+                  "hireDate": "2024-01-15",
+                  "salary": 5000.00
+                }
+                """;
+
+        mockMvc.perform(post(BASE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
+                .andExpect(status().isBadRequest());
     }
 
     // ----------------------------------------------------------------
@@ -159,8 +204,8 @@ public class EmployeeApiTest {
         mockMvc.perform(get(SEARCH + "/byFirstName")
                         .param("firstName", "Nonexistent")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.employees.length()", is(0)));
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$._embedded.employees", anyOf(nullValue(), hasSize(0))));
     }
 
     // ----------------------------------------------------------------
